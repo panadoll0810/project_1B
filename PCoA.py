@@ -10,7 +10,8 @@ from skbio.stats.distance import permanova, DistanceMatrix
 BASE_DIR = "/Users/milkcaramelcheng/Desktop/project_1b"
 MUTATION_FILE = os.path.join(BASE_DIR, "MFS_selected_genes", "MFS_regulator_mutation_Matrix.csv")
 MIC_FILE = os.path.join(BASE_DIR, "MIC_data.csv")
-OUTPUT_PLOT = os.path.join(BASE_DIR, "MFS_selected_genes", "PCoA_Jaccard_Clustering_MFS_regulator_with_label_test.pdf")
+OUTPUT_DIR = os.path.join(BASE_DIR, "MFS_selected_genes", "PCoA_analysis")
+OUTPUT_PLOT = os.path.join(OUTPUT_DIR, "PCoA_MFS_Regulator.pdf")
 THRESHOLD_HIGH = 7.0
 THRESHOLD_LOW = 4.0
 
@@ -120,6 +121,7 @@ def run_pcoa():
         'Strain': X.index
     })
 
+    plt.rcParams['font.family'] = 'Arial'
     fig, ax = plt.subplots(figsize=(11, 9))
 
     palette = {"High": "#F73F43", "Intermediate": "#ECBF51", "Low": "#60BFA4", "Unknown": "black"}
@@ -151,7 +153,7 @@ def run_pcoa():
     for _, row in high_subset.iterrows():
         texts.append(ax.text(
             row['PCoA 1'], row['PCoA 2'], row['Strain'],
-            fontsize=7.5, color='#F73F43', fontweight='bold', zorder=5
+            fontsize=7, color='#F73F43', fontweight='bold', zorder=5
         ))
     if texts:
         adjust_text(
@@ -161,9 +163,12 @@ def run_pcoa():
             only_move={'points': 'xy', 'texts': 'xy'}
         )
 
-    ax.set_xlabel(f"PCoA 1 ({pc1_var:.1f}%)", fontsize=12)
-    ax.set_ylabel(f"PCoA 2 ({pc2_var:.1f}%)", fontsize=12)
-    ax.set_title("PCoA of smvAR and tetAR (Jaccard Distance)", fontsize=14)
+    ax.set_xlabel(f"PCoA 1 ({pc1_var:.1f}%)", fontsize=8, fontweight='bold')
+    ax.set_ylabel(f"PCoA 2 ({pc2_var:.1f}%)", fontsize=8, fontweight='bold')
+    ax.set_title("PCoA of MFS Regulator (Jaccard Distance)", fontsize=14, fontweight='bold', pad=20)
+    ax.tick_params(labelsize=6)
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontweight('bold')
 
     p_val = permanova_result['p-value']
     pseudo_f = permanova_result['test statistic']
@@ -171,7 +176,7 @@ def run_pcoa():
     ax.text(
         0.02, 0.02,
         f"PERMANOVA: pseudo-F = {pseudo_f:.3f}, {p_str}",
-        transform=ax.transAxes, fontsize=9,
+        transform=ax.transAxes, fontsize=7, fontweight='bold',
         verticalalignment='bottom', horizontalalignment='left',
         bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7, edgecolor='gray')
     )
@@ -179,9 +184,12 @@ def run_pcoa():
     ax.grid(False)
 
     handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles, labels, title='CHD MIC Group', title_fontsize=10,
-              fontsize=9, loc='best', framealpha=0.7)
+    legend = ax.legend(handles, labels, title='CHD MIC Group', title_fontsize=10,
+                       fontsize=8, loc='best', framealpha=0.7,
+                       prop={'weight': 'bold'})
+    legend.get_title().set_fontweight('bold')
 
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     plt.tight_layout()
     plt.savefig(OUTPUT_PLOT, dpi=300)
     print(f"All done! Saved in {OUTPUT_PLOT}")
