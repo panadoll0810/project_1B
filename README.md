@@ -51,6 +51,8 @@ Output will be written to:
 | `THREADS` | `8` | CPU threads for Snippy |
 | `MINCOV` | `10` | Minimum coverage depth |
 | `MINFRAC` | `0.9` | Minimum variant allele fraction |
+| `BASEQUAL` | `20` | Minimum base quality |
+| `MAPQUAL` | `30` | Minimum mapping qualit |
 
 ## Output
 
