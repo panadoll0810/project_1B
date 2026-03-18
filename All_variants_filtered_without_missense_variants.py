@@ -2,8 +2,8 @@ import pandas as pd
 import glob
 import os
 
-INPUT_FOLDER = "/Users/milkcaramelcheng/Desktop/project_1b/snippy/all_csv_files/*.csv"
-OUTPUT_FOLDER = "/Users/milkcaramelcheng/Desktop/project_1b/All_variants_filtered_without_missense_variants"
+INPUT_FOLDER = "all_csv_files/*.csv"
+OUTPUT_FOLDER = "All_variants_filtered_without_missense_variants"
 
 def process_all_variants():
 
