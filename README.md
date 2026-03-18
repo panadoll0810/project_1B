@@ -13,19 +13,6 @@ This pipeline automates three steps:
 2. **Renaming** output folders/files using a CSV mapping table
 3. **Collecting** all `.csv` result files into one directory
 
-## Prerequisites
-
-- Bash ≥ 4.0
-- [Snippy](https://github.com/tseemann/snippy) installed and in `$PATH`
-- Paired-end FASTQ files (`.fastq.gz`)
-- Reference genome in `.gbk` format
-
-## Installation
-```bash
-git clone https://github.com/yourname/snippy-pipeline.git
-cd snippy-pipeline
-chmod +x run_pipeline.sh
-```
 
 ## Input Files
 ```
@@ -88,14 +75,6 @@ Iterates over every `CDS` feature in a GenBank file and writes the following fie
 | `Protein_ID` | NCBI protein accession (e.g. `WP_012345678.1`), `-` if absent |
 | `Product_Function` | Annotated product description |
 
-## Prerequisites
-
-- Python ≥ 3.7
-- Biopython
-```bash
-pip install biopython
-```
-
 ## Configuration
 
 Edit the two path variables at the top of the script:
@@ -116,19 +95,12 @@ Done! Extracted 5,832 genes. Output saved to ref_gene_functions_with_protein_id.
 
 ## Output
 
-A UTF-8 encoded CSV file with one row per CDS feature:
+A CSV file with one row per CDS feature:
 ```
 Start,End,Strand,Gene_Symbol,Locus_Tag,Protein_ID,Product_Function
 1423,2301,+,mfsA,BPSL0001,WP_012345678.1,MFS transporter
 2450,3102,-,-,BPSL0002,WP_012345679.1,hypothetical protein
 ```
-
-## Notes
-
-- Multi-record GenBank files (multiple contigs) are handled automatically
-- `Protein_ID` is extracted via regex matching `WP_\d+\.\d+`; if no match is found the raw qualifier value is kept
-- Missing qualifiers default to `-` (gene symbol, locus tag, protein ID) or `Unknown Function` (product)
-
 
 # Snippy Variant Filter 
 
@@ -137,14 +109,6 @@ Filters Snippy CSV output files by removing synonymous and missense variants, re
 ## What It Does
 
 Reads all `.csv` files from a Snippy output directory, removes rows where the `EFFECT` column contains `synonymous_variant` or `missense_variant`, and saves the filtered results to a new folder.
-
-## Prerequisites
-
-- Python ≥ 3.7
-- pandas
-```bash
-pip install pandas
-```
 
 ## Input
 
@@ -200,13 +164,6 @@ Builds a gene × sample mutation count matrix for a target gene list (e.g. MFS s
 2. Scans all filtered variant `.csv` files for hits matching those tags
 3. Outputs a pivot matrix — rows = locus tags, columns = sample names, values = mutation counts
 
-## Prerequisites
-
-- Python ≥ 3.7
-- pandas
-```bash
-pip install pandas
-```
 
 ## Project Structure
 ```
@@ -222,13 +179,7 @@ project_1b/
 
 ## Input Files
 
-**`MFS_mutation.csv`** — one locus tag per row, no header required (auto-detected):
-```
-BPSL0001
-BPSL0042
-BPSL1234
-...
-```
+**`MFS_mutation.csv`** — one locus tag per row, no header required (auto-detected)
 
 **Variant CSV files** — output from the Snippy Variant Filter step, must contain a `LOCUS_TAG` (or `locus_tag`) column.
 
@@ -236,7 +187,7 @@ BPSL1234
 
 Edit `BASE_DIR` at the top of the script to match your local path:
 ```python
-BASE_DIR = "/path/to/project_1b"
+BASE_DIR = "./project_1b"
 ```
 
 All other paths are derived automatically.
@@ -261,9 +212,9 @@ Sample size (column): 45
 
 |  | StrainA | StrainB | StrainC |
 |---|---|---|---|
-| BPSL0001 | 2 | 0 | 1 |
-| BPSL0042 | 0 | 3 | 0 |
-| BPSL1234 | 1 | 1 | 2 |
+| PMI_RS0001 | 2 | 0 | 1 |
+| PMI_RS0042 | 0 | 3 | 0 |
+| PMI_RS1234 | 1 | 1 | 2 |
 
 - Rows are sorted alphabetically by locus tag
 - Columns are sorted alphabetically by sample name
@@ -303,16 +254,9 @@ Visualises a gene × sample mutation count matrix as a paginated, group-annotate
 | Group bar | Colour-coded MIC range above columns |
 | Format | PDF, one file per page |
 
-## Prerequisites
-
-- Python ≥ 3.7
-```bash
-pip install pandas seaborn matplotlib
+##  Structure
 ```
-
-## Project Structure
-```
-project_1b/
+_1b/
 ├── strain_order_CHD_MICs_hightolow.csv   ← sample order + MIC group labels
 ├── MFS_superfamily/
 │   ├── MFS_mutation.csv                  ← locus tags + gene descriptions
@@ -337,15 +281,15 @@ Low MIC,   StrainC
 
 **`MFS_mutation.csv`** — locus tags with optional gene descriptions (second column):
 ```
-BPSL0001, MFS transporter
-BPSL0042, TetR family regulator
+PMI_RS0001, MFS transporter
+PMI_RS0042, TetR family regulator
 ```
 
 ## Configuration
 
 Edit the constants at the top of the script:
 ```python
-BASE_DIR       = "/path/to/project_1b"
+BASE_DIR       = "./project_1b"
 GENES_PER_PAGE = 100     # rows per PDF page
 CUSTOM_VMAX    = 3       # colour scale ceiling
 CELL_HEIGHT    = 0.22    # inches per row
@@ -399,9 +343,6 @@ Performs Principal Coordinates Analysis (PCoA) on a binary mutation matrix using
 5. Plots scatter with **95% confidence ellipses** per MIC group and strain labels for High-MIC samples
 6. Saves output as a PDF
 
-## Example Output
-
-![PCoA schematic](https://via.placeholder.com/600x400?text=PCoA+scatter+%E2%80%94+replace+with+actual+figure)
 
 | Feature | Detail |
 |---|---|
@@ -412,12 +353,6 @@ Performs Principal Coordinates Analysis (PCoA) on a binary mutation matrix using
 | Labels | Strain names shown for High-MIC group only |
 | Statistics | PERMANOVA pseudo-F and p-value in plot corner |
 
-## Prerequisites
-
-- Python ≥ 3.7
-```bash
-pip install pandas numpy matplotlib scipy scikit-bio adjustText
-```
 
 ## Project Structure
 ```
@@ -434,8 +369,8 @@ project_1b/
 **`MFS_regulator_mutation_Matrix.csv`** — gene × sample or sample × gene mutation count matrix (orientation is detected automatically):
 ```
          StrainA  StrainB  StrainC
-BPSL0001       1        0        2
-BPSL0042       0        1        0
+PMI_RS0001       1        0        2
+PMI_RS0042       0        1        0
 ```
 
 **`MIC_data.csv`** — CHD MIC values per strain (column containing `chd` is auto-detected):
@@ -460,7 +395,7 @@ THRESHOLD_LOW  = 4.0   # MIC ≤ 4  → Low  (green)
 
 ## Configuration
 ```python
-BASE_DIR      = "/path/to/project_1b"
+BASE_DIR      = "./project_1b"
 OUTPUT_PLOT   = "...PCoA_MFS_Regulator.pdf"
 ```
 
@@ -516,12 +451,6 @@ Trains Elastic Net logistic regression models across a range of L1/L2 penalty ra
 | `ElasticNet_Feature_Importance_CHD_l1ratio_*.pdf` | Top 10 features per L1 ratio |
 | `ElasticNet_L1_ratio_Comparison.pdf` | CV accuracy + active feature count across all ratios |
 
-## Prerequisites
-
-- Python ≥ 3.7
-```bash
-pip install pandas numpy matplotlib seaborn scikit-learn
-```
 
 ## Project Structure
 ```
@@ -538,8 +467,8 @@ project_1b/
 **`MFS_selected_genes_mutation_Matrix.csv`** — gene × sample or sample × gene mutation count matrix (orientation auto-detected):
 ```
          StrainA  StrainB  StrainC
-BPSL0001       1        0        2
-BPSL0042       0        1        0
+PMI_RS0001       1        0        2
+PMI_RS0042       0        1        0
 ```
 
 **`MIC_data.csv`** — CHD MIC values per strain (column containing `chd` is auto-detected):
@@ -552,8 +481,8 @@ StrainC,  2
 
 **`MFS_selected_genes.csv`** — locus tag to gene description mapping (no header):
 ```
-BPSL0001, MFS transporter
-BPSL0042, TetR family regulator
+PMI_RS0001, MFS transporter
+PMI_RS0042, TetR family regulator
 ```
 
 ## Configuration
