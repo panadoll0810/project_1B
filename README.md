@@ -73,7 +73,7 @@ Iterates over every `CDS` feature in a GenBank file and writes the following fie
 | `End` | Genomic end position |
 | `Strand` | `+` or `-` |
 | `Gene_Symbol` | Gene name (e.g. `mfsA`), `-` if absent |
-| `Locus_Tag` | Locus tag (e.g. `BPSL0001`), `-` if absent |
+| `Locus_Tag` | Locus tag (e.g. `PMI_RS0001`), `-` if absent |
 | `Protein_ID` | NCBI protein accession (e.g. `WP_012345678.1`), `-` if absent |
 | `Product_Function` | Annotated product description |
 
@@ -100,8 +100,8 @@ Done! Extracted 5,832 genes. Output saved to ref_gene_functions_with_protein_id.
 A CSV file with one row per CDS feature:
 ```
 Start,End,Strand,Gene_Symbol,Locus_Tag,Protein_ID,Product_Function
-1423,2301,+,mfsA,BPSL0001,WP_012345678.1,MFS transporter
-2450,3102,-,-,BPSL0002,WP_012345679.1,hypothetical protein
+1423,2301,+,mfsA,PMI_RS0001,WP_012345678.1,MFS transporter
+2450,3102,-,-,PMI_RS0002,WP_012345679.1,hypothetical protein
 ```
 
 # Snippy Variant Filter 
